@@ -6,7 +6,7 @@ services:
     buildCommand: npm install && npm run build
     startCommand: npm run start:prod
     envVars:
-      - key: MAIL_USER
+      - key: RESEND_API_KEY
         sync: false
-      - key: MAIL_PASS
+      - key: MAIL_TO
         sync: false

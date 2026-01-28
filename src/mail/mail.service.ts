@@ -1,28 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { SendMailDto } from './dto/send-mail.dto';
 
 @Injectable()
 export class MailService {
-  private transporter: nodemailer.Transporter;
+  private resend: Resend;
 
   constructor(private configService: ConfigService) {
-    this.transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: this.configService.get<string>('MAIL_USER'),
-        pass: this.configService.get<string>('MAIL_PASS'),
-      },
-    });
+    this.resend = new Resend(this.configService.get<string>('RESEND_API_KEY'));
   }
 
   async sendContactEmail(dto: SendMailDto): Promise<void> {
-    await this.transporter.sendMail({
-      from: `"Portfolio Contact" <${this.configService.get<string>('MAIL_USER')}>`,
-      to: this.configService.get<string>('MAIL_USER'),
+    await this.resend.emails.send({
+      from: 'Portfolio Contact <onboarding@resend.dev>',
+      to: this.configService.get<string>('MAIL_TO'),
       replyTo: dto.email,
       subject: `Contato via Portfolio - ${dto.name}`,
       html: `
